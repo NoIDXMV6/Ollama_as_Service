@@ -1,0 +1,26 @@
+# Temporary files
+*.tmp
+*.log
+*.lock
+Thumbs.db
+.DS_Store
+
+# Windows
+$RECYCLE.BIN/
+System Volume Information/
+
+# Logs (оставим только структуру)
+logs/*
+!.gitkeep
+
+# Temp & cache
+env/
+temp/
+build/
+node_modules/
+
+# Sensitive data
+*.password
+*.key
+*.pem
+config/*.env  # ❗ ВАЖНО: .env не должен попадать в репозиторий!
