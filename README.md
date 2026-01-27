@@ -1,63 +1,108 @@
-✅ ВНИМАНИЕ!
-Убедитесь, что Ollama установлен для хотя бы одного пользователя
+# Ollama as a Windows Service
 
-Шаг 1: Скачайте и установите Ollama
-Перейдите: https://ollama.com/download
-Скачайте OllamaSetup.exe
-Запустите и установите под обычным пользователем (например, вашей учётной записью)
-⚠️ Установка должна пройти успешно — появится ярлык, можно запустить.
+Запускайте [Ollama](https://ollama.com) как фоновую службу Windows с автозапуском, управлением моделями и сетевым доступом.
 
-После установки файл будет здесь:
+![PowerShell](https://img.shields.io/badge/PowerShell-5.1%2B-blue?logo=powershell&logoColor=white)
+![Windows](https://img.shields.io/badge/OS-Windows-blue?logo=windows)
+![License](https://img.shields.io/github/license/NoIDXMV6/Ollama_as_Service)
 
-C:\Users\ВАШ_ПОЛЬЗОВАТЕЛЬ\AppData\Local\Programs\Ollama\ollama.exe
-Шаг 2: Проверьте, что файл существует
-Выполните в PowerShell:
+---
 
-Get-ChildItem -Path "C:\Users\*\AppData\Local\Programs\Ollama\ollama.exe" | Select FullName
+## 🚀 Особенности
 
-Если видите путь — отлично, скрипт найдёт его.
+- ✅ Запуск Ollama как службы (через `nssm`)
+- ✅ Автозагрузка при старте системы
+- ✅ Отдельный пользователь `OllamaService`
+- ✅ Сетевой доступ: `http://IP:11434`
+- ✅ Поддержка внешних путей к моделям (например, `C:\Users\...\ .ollama\models`)
+- ✅ Интерактивное обновление моделей
+- ✅ Простая установка и удаление
 
-Если нет — значит, Ollama не установлен или установлен в другое место.
+---
 
-Запустите .\scripts\install.ps1 от администратора
+## ⚙️ Установка
 
-PowerShell -ExecutionPolicy Bypass -File ".\scripts\install.ps1"
+1. Убедитесь, что установлено:
+   - [Ollama](https://ollama.com/download) (обычный клиент)
+   - Права администратора
 
-Введите пароль для OllamaService
-Добавьте OllamaService в "Log on as a service" через secpol.msc
-💡 Как добавить:
+2. Скачайте репозиторий или клонируйте:
 
-Win + R → secpol.msc
-Local Policies → User Rights Assignment
-Найдите: Log on as a service
-Добавьте: OllamaService
+   ```powershell
+   git clone https://github.com/NoIDXMV6/Ollama_as_Service.git
+## Запустите установку от администратора:
+![PowerShell](PowerShell -ExecutionPolicy Bypass -File ".\scripts\install.ps1")
 
-# Ollama Secure Service
+## Следуйте инструкциям:
 
-Ollama должна быть установлена в системе ДО запуска скрипта!
+Введите и подтвердите пароль для пользователя OllamaService
+При необходимости укажите путь к моделям (или оставьте пустым для авто-поиска)
 
-## Установка
-1. Распакуйте архив в `C:\Program Files\OllamaService`
-2. Запустите `double_click_install.bat` от имени администратора
-3. Введите надёжный пароль при запросе
+## Доступ
 
-## После установки
-- Ollama запускается при старте системы
-- Доступен по `http://IP_ВАШЕГО_ПК:11434`
-- Логи: `C:\Program Files\OllamaService\logs\`
-- Модели обновляются вручную через `scripts\update_models.ps1`
+После установки:
 
-## Обновление моделей
-Запустите:
-```powershell
-powershell.exe -ExecutionPolicy Bypass -File "C:\Program Files\OllamaService\scripts\update_models.ps1"
+Локально: http://localhost:11434
+По сети: http://<ваш_IP>:11434
+API полностью совместим с Ollama
+## 🔄 Обновление моделей
 
-✅ Как добавить право "Log on as a service" вручную
-Откройте:
-secpol.msc → Local Policies → User Rights Assignment
-Найдите: Log on as a service
-Добавьте: OllamaService
-Или используйте ntrights.exe (из Windows Resource Kit):
+powershell
+PowerShell -ExecutionPolicy Bypass -File ".\scripts\update_models.ps1"
+→ Скрипт покажет установленные модели и предложит обновить выбранные.
 
-cmd
-ntrights.exe -u OllamaService +l "SeServiceLogonRight"
+## 🧹 Удаление
+powershell
+PowerShell -ExecutionPolicy Bypass -File ".\scripts\uninstall.ps1"
+→ Полностью удалит службу, задачи, пользователя и папку.
+
+📁 Структура
+Ollama_as_Service/
+├── bin/               # nssm.exe, curl.exe
+├── logs/              # Логи службы и обновлений
+├── models/            → Символическая ссылка на реальные модели
+├── scripts/
+│   ├── install.ps1    # Установка
+│   ├── uninstall.ps1  # Удаление
+│   └── update_models.ps1  # Обновление моделей
+└── config/            # .env (OLLAMA_MODELS=...)
+## 🛡️ Требования безопасности
+Пользователь OllamaService добавляется в группу "Log on as a service" (сделайте это в secpol.msc)
+Пароль задаётся при установке
+Ограниченные права через ACL
+
+## 📄 Лицензия
+MIT — см. файл LICENSE.
+
+## 🤝 Автор
+Разработано для комфортного запуска Ollama на Windows-серверах и рабочих станциях.
+
+
+---
+
+### 📄 3. `LICENSE` — MIT (рекомендуется)
+
+Создайте файл `LICENSE` в корне:
+
+```text
+MIT License
+
+Copyright (c) 2025 NoIDXMV6
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
