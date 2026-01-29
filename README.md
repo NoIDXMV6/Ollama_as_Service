@@ -1,5 +1,5 @@
 # Ollama as a Windows Service
-
+# Проект закрыт. Используйте Install Ollama as Service
 Запускайте [Ollama](https://ollama.com) как фоновую службу Windows с автозапуском, управлением моделями и сетевым доступом.
 
 ![PowerShell](https://img.shields.io/badge/PowerShell-5.1%2B-blue?logo=powershell&logoColor=white)
